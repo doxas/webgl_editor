@@ -11,17 +11,17 @@
 </head>
 <body>
 	<div id="left">
-		<canvas id="canvas"></canvas>
+		<iframe id="frame"></iframe>
 		<div id="console">
 			<p>test</p>
 		</div>
 	</div>
 	<div id="right">
 		<div id="tabs">
-			<div class="tab active">html</div>
-			<div class="tab">javascript</div>
+			<div id="tabHTML" class="tab active">html</div>
+			<div id="tabJavascript" class="tab">javascript</div>
 		</div>
-		<pre id="editor" class="editor">&lt;!DOCTYPE html&gt;
+		<pre id="editorHTML" class="editor selected">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 	&lt;head&gt;
 		&lt;meta charset="utf-8"&gt;
@@ -56,6 +56,25 @@
 			}
 		&lt;/script&gt;
 		&lt;script&gt;
+		&lt;/script&gt;
+		&lt;style&gt;
+			* {
+				margin:0;
+				padding:0;
+				overflow:hidden;
+			}
+			html,body{
+				height:100%;
+			}
+		&lt;/style&gt;
+		&lt;title&gt;your demo title&lt;/title&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		&lt;canvas id="c"&gt;&lt;/canvas&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+		</pre>
+		<pre id="editorJavascript" class="editor">
 			window.onload = function(){
 				var a, b, c, d, e, f, g, h, p, t, u, v, w, x, y, z;
 				b = function(s){return document.getElementById(s)};
@@ -99,23 +118,6 @@
 				})();
 				function k(h){e = (h.keyCode !== 27);}
 			};
-		&lt;/script&gt;
-		&lt;style&gt;
-			* {
-				margin:0;
-				padding:0;
-				overflow:hidden;
-			}
-			html,body{
-				height:100%;
-			}
-		&lt;/style&gt;
-		&lt;title&gt;your demo title&lt;/title&gt;
-	&lt;/head&gt;
-	&lt;body&gt;
-		&lt;canvas id="c"&gt;&lt;/canvas&gt;
-	&lt;/body&gt;
-&lt;/html&gt;
 		</pre>
 	</div>
 </body></html>
