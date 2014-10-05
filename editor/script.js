@@ -56,8 +56,8 @@ function tabSelecter(eve){
 		}
 		bid('editor' + editorNames[i]).className = c;
 		bid('tab' + editorNames[i]).className = d;
-		editorInitialize();
 	}
+	editorInitialize();
 }
 
 function keydown(eve){run = (eve.keyCode !== 27);}
