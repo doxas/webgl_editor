@@ -84,10 +84,25 @@ html, body {
 	font-size: 12px;
 	position: absolute;
 	top: 20px;
-	bottom: 0;
+	bottom: 50px;
 	left: 512px;
-	right: 0;
+	right: 0px;
 	display: none;
+}
+
+#right #menu {
+	background-color: #555;
+	color: #ccc;
+	line-height: 25px;
+	width: 100%;
+	height: 50px;
+	position: absolute;
+	bottom: 0px;
+	left: 512px;
+}
+
+#menu p {
+	margin: 0px 5px;
 }
 
 #right .selected {

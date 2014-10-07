@@ -1,9 +1,11 @@
-var run, gl, prg, uni;
+var ax, run, gl, prg, uni;
 var editors = [];
-var editorNames = ['HTML', 'Javascript'];
-var editorModes = ['html', 'javascript'];
+var editorNames = ['HTML', 'Vertex', 'Fragment', 'Javascript'];
+var editorModes = ['html', 'glsl', 'glsl', 'javascript'];
+var ajaxTarget = dirPath() + 'append.php';;
 
 window.onload = function(){
+	var e, f;
 	editorInitialize();
 	win = window;
 	win.addEventListener('keydown', keydown, true);
@@ -11,6 +13,20 @@ window.onload = function(){
 		bid('tab' + editorNames[i]).addEventListener('click', tabSelecter, true);
 	}
 	run = false;
+	
+	// ajax
+	ax = new Ajax(function(){
+		var r = ax.getResponse();
+		if(r != null){
+			if(r !== 'bad request'){
+				alert('test');
+			}
+		}
+	});
+	ax.initialize();
+	
+	e = bid('appendButton');
+	e.addEventListener('click', editorAppend, true);
 };
 
 function editorInitialize(){
@@ -32,6 +48,13 @@ function editorGenerate(id, mode){
 	elm.getSession().setUseSoftTabs(false);
 	bid(id).style.fontSize = '12px';
 	return elm;
+}
+
+function editorAppend(eve){
+	var e;
+	e = bid('appendFunction');
+	if(e.value === ""){return;}
+	ax.requestPost(ajaxTarget, {append: e.value});
 }
 
 function init(){
@@ -63,4 +86,60 @@ function tabSelecter(eve){
 function keydown(eve){run = (eve.keyCode !== 27);}
 
 function bid(id){return document.getElementById(id);}
+
+function dirPath(){
+	var a = location.href.split('/');
+	a.pop();
+	return a.join('/') + '/';
+}
+
+function Ajax(callBackFunction){
+	var response = '';
+	this.h;
+	this.initialize = function(){
+		if(window.XMLHttpRequest){this.h = new XMLHttpRequest();}
+		if(this.h){
+			response = '';
+			return true;
+		}else{
+			return false;
+		}
+	};
+	if(callBackFunction != null){
+		this.callBack = function(){
+			if(this.readyState === 4){
+				response = this.responseText;
+				callBackFunction();
+			}
+		};
+	}else{
+		this.callBack = undefined;
+	}
+	this.requestPost = function(url, param){
+		var s = '';
+		if(!this.h){return false;}
+		if(param){s = this.convertParam(param);}
+		this.h.abort();
+		this.h.open('post', url, true);
+		if(this.callBack != null){
+			this.h.onreadystatechange = this.callBack;
+		}
+		this.h.setRequestHeader('X-From', location.href);
+		this.h.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		this.h.send(s);
+	};
+	this.getResponse = function(){
+		return response;
+	};
+	this.convertParam = function(paramArray){
+		var param = new Array();
+		for(var v in paramArray){
+			var s = encodeURIComponent(v).replace(/%20/g, '+');
+			s += '=' + encodeURIComponent(paramArray[v]).replace(/%20/g, '+');
+			param.push(s);
+		}
+		s = param.join('&');
+		return s;
+	};
+}
 
