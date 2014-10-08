@@ -70,8 +70,8 @@ function init(){
 	d.write(editors[0].getValue());
 	d.close();
 	b = d.body;
-	s =  'var vs = "' + editors[1].getValue().replace(/\n/g, '') + '";\n';
-	s += 'var fs = "' + editors[2].getValue().replace(/\n/g, '') + '";\n';
+	s =  'var vs = "' + editors[1].getValue().replace(/\n/g, '\\n') + '";\n';
+	s += 'var fs = "' + editors[2].getValue().replace(/\n/g, '\\n') + '";\n';
 	s += editors[3].getValue();
 	t = d.createElement('script');
 	t.textContent = s;
