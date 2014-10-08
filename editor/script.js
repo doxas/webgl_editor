@@ -29,8 +29,6 @@ window.onload = function(){
 	e.addEventListener('click', editorAppend, true);
 	e = bid('runButton');
 	e.addEventListener('click', init, true);
-	e = bid('stopButton');
-	e.addEventListener('click', function(){run = false;}, true);
 };
 
 function editorInitialize(){
@@ -72,6 +70,8 @@ function init(){
 	b = d.body;
 	s =  'var vs = "' + editors[1].getValue().replace(/\n/g, '\\n') + '";\n';
 	s += 'var fs = "' + editors[2].getValue().replace(/\n/g, '\\n') + '";\n';
+	s += 'var run = false; var parentButton = window.parent.document.getElementById("stopButton");';
+	s += 'parentButton.addEventListener("click", function(){run = false; alert("run stop");}, true);';
 	s += editors[3].getValue();
 	t = d.createElement('script');
 	t.textContent = s;
