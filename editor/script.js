@@ -27,6 +27,10 @@ window.onload = function(){
 	
 	e = bid('appendButton');
 	e.addEventListener('click', editorAppend, true);
+	e = bid('runButton');
+	e.addEventListener('click', init, true);
+	e = bid('stopButton');
+	e.addEventListener('click', function(){run = false;}, true);
 };
 
 function editorInitialize(){
@@ -58,7 +62,20 @@ function editorAppend(eve){
 }
 
 function init(){
-	alert('init!');
+	var b, d, e;
+	var s, t;
+	e = bid('frame');
+	d = e.contentDocument;
+	d.open();
+	d.write(editors[0].getValue());
+	d.close();
+	b = d.body;
+	s =  'var vs = "' + editors[1].getValue().replace(/\n/g, '') + '";\n';
+	s += 'var fs = "' + editors[2].getValue().replace(/\n/g, '') + '";\n';
+	s += editors[3].getValue();
+	t = d.createElement('script');
+	t.textContent = s;
+	b.appendChild(t);
 }
 
 function render(){

@@ -33,7 +33,7 @@
 				padding: 0px;
 				overflow:hidden;
 			}
-			html,body{
+			html, body{
 				width: 100%;
 				height: 100%;
 			}
@@ -69,23 +69,31 @@ void main(void){
 	float h = abs(mod(time * 15.0 - float(j), 360.0) / 360.0);
 	gl_FragColor = vec4(hsv(h, 1.0, 1.0), 1.0);
 }</pre>
-		<pre id="editorJavascript" class="editor">window.onload = function(){
-	var a, b, c, d, e, f, g, h, p, t, u, v, w, x, y, z;
-	b = function(s){return document.getElementById(s)};
-	w = window;
-	w.addEventListener('keydown', k, true);
-	c = b('c');
-	g = c.getContext('webgl');
-	p = g.createProgram();
-	h = function(i, j){
-		k = g.createShader(g.VERTEX_SHADER - i);
-		g.shaderSource(k, j);
-		g.compileShader(k);
-		g.attachShader(p, k);
-		return g.getShaderInfoLog(k);
-	}
-	if(!h(0, b('vs').text) &amp;&amp; !h(1, b('fs').text)){g.linkProgram(p);}
-	e = g.getProgramParameter(p, g.LINK_STATUS);
+		<pre id="editorJavascript" class="editor">var a, b, c, d, e, g, h, p, u, w, x, y, z;
+b = function(s){return document.getElementById(s);};
+w = window;
+w.addEventListener('keydown', k, true);
+c = b('c');
+g = c.getContext('webgl');
+p = g.createProgram();
+h = function(i, j){
+	k = g.createShader(g.VERTEX_SHADER - i);
+	g.shaderSource(k, j);
+	g.compileShader(k);
+	
+	// shader compile check
+	if(!g.getShaderParameter(k, g.COMPILE_STATUS)){alert(g.getShaderInfoLog(k));}
+	
+	g.attachShader(p, k);
+	return g.getShaderInfoLog(k);
+};
+if(!h(0, vs) && !h(1, fs)){g.linkProgram(p);}
+e = g.getProgramParameter(p, g.LINK_STATUS);
+
+// link program check
+if(!e){
+	alert(g.getProgramInfoLog(p));
+}else{
 	g.useProgram(p);
 	u = {};
 	u.time = g.getUniformLocation(p, 'time');
@@ -110,8 +118,8 @@ void main(void){
 		g.flush();
 		requestAnimationFrame(arguments.callee);
 	})();
-	function k(h){e = (h.keyCode !== 27);}
-};</pre>
+}
+function k(h){e = (h.keyCode !== 27);}</pre>
 		<div id="menu">
 			<div>
 				<p>
@@ -132,6 +140,11 @@ void main(void){
 					<input id="appendButton" type="button" value="append">
 				</p>
 			</div>
+			<div>
+				<p>
+					<input id="runButton" type="button" value="run">
+					<input id="stopButton" type="button" value="stop">
+				</p>
 		</div>
 	</div>
 </body></html>
