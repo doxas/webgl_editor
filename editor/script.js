@@ -68,10 +68,11 @@ function init(){
 	d.write(editors[0].getValue());
 	d.close();
 	b = d.body;
-	s =  'var vs = "' + editors[1].getValue().replace(/\n/g, '\\n') + '";\n';
-	s += 'var fs = "' + editors[2].getValue().replace(/\n/g, '\\n') + '";\n';
-	s += 'var run = false; var parentButton = window.parent.document.getElementById("stopButton");';
-	s += 'parentButton.addEventListener("click", function(){run = false; alert("run stop");}, true);';
+	s =  'var WE = {run: false, vs: "", fs: "", textures: []};\n';
+	s += 'WE.vs = "' + editors[1].getValue().replace(/\n/g, '\\n') + '";\n';
+	s += 'WE.fs = "' + editors[2].getValue().replace(/\n/g, '\\n') + '";\n';
+	s += 'WE.run = false; var parentButton = window.parent.document.getElementById("stopButton");';
+	s += 'parentButton.addEventListener("click", function(){WE.run = false;}, true);';
 	s += editors[3].getValue();
 	t = d.createElement('script');
 	t.textContent = s;
