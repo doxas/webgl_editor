@@ -1,0 +1,34 @@
+
+/**
+ * シェーダを生成する関数
+ * @param {string} source シェーダのソースとなるテキスト
+ * @param {number} type シェーダのタイプを表す定数 gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
+ * @return {object} 生成に成功した場合はシェーダオブジェクト、失敗した場合は null
+ */
+function create_shader(source, type){
+	// シェーダを格納する変数
+	var shader;
+	
+	// シェーダの生成
+	shader = gl.createShader(type);
+	
+	// 生成されたシェーダにソースを割り当てる
+	gl.shaderSource(shader, scriptElement.text);
+	
+	// シェーダをコンパイルする
+	gl.compileShader(shader);
+	
+	// シェーダが正しくコンパイルされたかチェック
+	if(gl.getShaderParameter(shader, gl.COMPILE_STATUS)){
+		
+		// 成功していたらシェーダを返して終了
+		return shader;
+	}else{
+		
+		// 失敗していたらエラーログをアラートする
+		alert(gl.getShaderInfoLog(shader));
+		
+		// null を返して終了
+		return null;
+	}
+}

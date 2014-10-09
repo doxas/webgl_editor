@@ -2,7 +2,7 @@
 /**
  * シェーダを生成する関数
  * @param {string} source シェーダのソースとなるテキスト
- * @param {int} type シェーダのタイプを表す定数 gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
+ * @param {number} type シェーダのタイプを表す定数 gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
  * @return {object} 生成に成功した場合はシェーダオブジェクト、失敗した場合は null
  */
 function create_shader(source, type){
@@ -112,9 +112,11 @@ function create_ibo(data){
 	return ibo;
 }
 
-// VBOをバインドし登録する関数
 /**
- *
+ * VBOをバインドし登録する関数
+ * @param {object} vbo 頂点バッファオブジェクト
+ * @param {Array.<number>} attribute location を格納した配列
+ * @param {Array.<number>} アトリビュートのストライドを格納した配列
  */
 function set_attribute(vbo, attL, attS){
 	// 引数として受け取った配列を処理する
@@ -130,9 +132,10 @@ function set_attribute(vbo, attL, attS){
 	}
 }
 
-// テクスチャを生成する関数
 /**
- *
+ * テクスチャを生成する関数
+ * @param {object} source テクスチャに適用する画像ファイルのパス
+ * @param {number} number テクスチャ用配列に格納するためのインデックス
  */
 function create_texture(source, number){
 	// イメージオブジェクトの生成
@@ -163,10 +166,11 @@ function create_texture(source, number){
 	img.src = source;
 }
 
-
-// フレームバッファをオブジェクトとして生成する関数
 /**
- *
+ * フレームバッファをオブジェクトとして生成する関数
+ * @param {number} width フレームバッファの横幅をピクセル単位で指定
+ * @param {number} height フレームバッファの縦幅をピクセル単位で指定
+ * @return {object} フレームバッファとレンダーバッファ、カラーバッファ用のテクスチャを含むオブジェクト
  */
 function create_framebuffer(width, height){
 	// フレームバッファの生成
@@ -212,9 +216,11 @@ function create_framebuffer(width, height){
 	return {f : frameBuffer, d : depthRenderBuffer, t : fTexture};
 }
 
-// キューブマップテクスチャを生成する関数
 /**
- *
+ * キューブマップテクスチャを生成する関数
+ * @param {Array.<string>} source テクスチャに設定する画像のパスを格納した配列
+ * @param {Array.<number>} target テクスチャに割り当てるターゲットを指定する定数を格納した配列
+ * @param {number} number テクスチャ用配列に格納するためのインデックス
  */
 function create_texture_cube(source, target, number){
 	// インスタンス用の配列
@@ -285,9 +291,12 @@ function create_texture_cube(source, target, number){
 	}
 }
 
-// フレームバッファをオブジェクトとして生成する関数(キューブマップ仕様)
 /**
- *
+ * フレームバッファをオブジェクトとして生成する関数(キューブマップ仕様)
+ * @param {number} フレームバッファの横幅をピクセル単位で指定
+ * @param {number} フレームバッファの縦幅をピクセル単位で指定
+ * @param {Array.<number>} フレームバッファに割り当てるターゲットを指定する定数を格納した配列
+ * @return {object} フレームバッファとレンダーバッファ、カラーバッファ用のテクスチャを含むオブジェクト
  */
 function create_framebuffer_cube(width, height, target){
 	// フレームバッファの生成
@@ -331,4 +340,3 @@ function create_framebuffer_cube(width, height, target){
 	// オブジェクトを返して終了
 	return {f : frameBuffer, d : depthRenderBuffer, t : fTexture};
 }
-

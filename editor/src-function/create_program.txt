@@ -1,0 +1,35 @@
+
+/**
+ * プログラムオブジェクトを生成しシェーダをリンクする関数
+ * @param {object} vs 頂点シェーダとして生成したシェーダオブジェクト
+ * @param {object} fs フラグメントシェーダとして生成したシェーダオブジェクト
+ * @return {object} 生成に成功した場合はプログラムオブジェクト、失敗した場合は null
+ */
+function create_program(vs, fs){
+	// プログラムオブジェクトの生成
+	var program = gl.createProgram();
+	
+	// プログラムオブジェクトにシェーダを割り当てる
+	gl.attachShader(program, vs);
+	gl.attachShader(program, fs);
+	
+	// シェーダをリンク
+	gl.linkProgram(program);
+	
+	// シェーダのリンクが正しく行なわれたかチェック
+	if(gl.getProgramParameter(program, gl.LINK_STATUS)){
+	
+		// 成功していたらプログラムオブジェクトを有効にする
+		gl.useProgram(program);
+		
+		// プログラムオブジェクトを返して終了
+		return program;
+	}else{
+		
+		// 失敗していたらエラーログをアラートする
+		alert(gl.getProgramInfoLog(program));
+		
+		// null を返して終了
+		return null;
+	}
+}

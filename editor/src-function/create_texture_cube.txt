@@ -1,0 +1,75 @@
+
+/**
+ * キューブマップテクスチャを生成する関数
+ * @param {Array.<string>} source テクスチャに設定する画像のパスを格納した配列
+ * @param {Array.<number>} target テクスチャに割り当てるターゲットを指定する定数を格納した配列
+ * @param {number} number テクスチャ用配列に格納するためのインデックス
+ */
+function create_texture_cube(source, target, number){
+	// インスタンス用の配列
+	var cImg = new Array();
+	
+	for(var i = 0; i < source.length; i++){
+		// インスタンスの生成
+		cImg[i] = new cubeMapImage();
+		
+		// イメージオブジェクトのソースを指定
+		cImg[i].data.src = source[i];
+	}
+	
+	// キューブマップ用イメージのコンストラクタ
+	function cubeMapImage(){
+		// イメージオブジェクトを格納
+		this.data = new Image();
+		
+		// イメージロードをトリガーにする
+		this.data.onload = function(){
+			// プロパティを真にする
+			this.imageDataLoaded = true;
+			
+			// チェック関数を呼び出す
+			checkLoaded();
+		};
+	}
+	
+	// イメージロード済みかチェックする関数
+	function checkLoaded(){
+		// 全てロード済みならキューブマップを生成する関数を呼び出す
+		if( cImg[0].data.imageDataLoaded &&
+			cImg[1].data.imageDataLoaded &&
+			cImg[2].data.imageDataLoaded &&
+			cImg[3].data.imageDataLoaded &&
+			cImg[4].data.imageDataLoaded &&
+			cImg[5].data.imageDataLoaded){generateCubeMap();}
+	}
+	
+	// キューブマップを生成する関数
+	function generateCubeMap(){
+		// テクスチャオブジェクトの生成
+		var tex = gl.createTexture();
+		
+		// テクスチャをキューブマップとしてバインドする
+		gl.bindTexture(gl.TEXTURE_CUBE_MAP, tex);
+		
+		// ソースを順に処理する
+		for(var j = 0; j < source.length; j++){
+			// テクスチャへイメージを適用
+			gl.texImage2D(target[j], 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cImg[j].data);
+		}
+		
+		// ミップマップを生成
+		gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+		
+		// テクスチャパラメータの設定
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		
+		// キューブマップテクスチャを変数に代入
+		WE.textures[number] = tex;
+		
+		// テクスチャのバインドを無効化
+		gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+	}
+}

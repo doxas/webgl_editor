@@ -1,0 +1,22 @@
+
+/**
+ * VBOを生成する関数
+ * @param {Array.<number>} data 頂点属性を格納した一次元配列
+ * @return {object} 頂点バッファオブジェクト
+ */
+function create_vbo(data){
+	// バッファオブジェクトの生成
+	var vbo = gl.createBuffer();
+	
+	// バッファをバインドする
+	gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+	
+	// バッファにデータをセット
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+	
+	// バッファのバインドを無効化
+	gl.bindBuffer(gl.ARRAY_BUFFER, null);
+	
+	// 生成した VBO を返して終了
+	return vbo;
+}

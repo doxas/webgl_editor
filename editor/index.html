@@ -13,7 +13,7 @@
 	<div id="left">
 		<iframe id="frame"></iframe>
 		<div id="console">
-			<p>test</p>
+			<p>webgl editor</p>
 		</div>
 	</div>
 	<div id="right">
@@ -68,7 +68,7 @@ void main(void){
 	float h = abs(mod(time * 15.0 - float(j), 360.0) / 360.0);
 	gl_FragColor = vec4(hsv(h, 1.0, 1.0), 1.0);
 }</pre>
-		<pre id="editorJavascript" class="editor">var a, b, c, d, e, g, h, p, u, w, x, y, z;
+		<pre id="editorJavascript" class="editor">var a, b, c, d, g, h, p, u, w, x, y, z;
 b = function(s){return document.getElementById(s);};
 w = window;
 w.addEventListener('keydown', k, true);
@@ -86,11 +86,11 @@ h = function(i, j){
 	g.attachShader(p, k);
 	return g.getShaderInfoLog(k);
 };
-if(!h(0, vs) && !h(1, fs)){g.linkProgram(p);}
-e = g.getProgramParameter(p, g.LINK_STATUS);
+if(!h(0, WE.vs) && !h(1, WE.fs)){g.linkProgram(p);}
+WE.run = g.getProgramParameter(p, g.LINK_STATUS);
 
 // link program check
-if(!e){
+if(!WE.run){
 	alert(g.getProgramInfoLog(p));
 }else{
 	g.useProgram(p);
@@ -105,7 +105,7 @@ if(!e){
 	g.clearColor(0, 0, 0, 1);
 	z = new Date().getTime();
 	(function(){
-		if(!e){return;}
+		if(!WE.run){return;}
 		c.width = x = w.innerWidth;
 		c.height = y = w.innerHeight;
 		g.viewport(0, 0, x, y);
@@ -118,14 +118,14 @@ if(!e){
 		requestAnimationFrame(arguments.callee);
 	})();
 }
-function k(h){e = (h.keyCode !== 27);}</pre>
+function k(h){WE.run = (h.keyCode !== 27);}</pre>
 		<div id="menu">
 			<div>
 				<p>
 					<span class="caption">append function:</span>
 					<select id="appendFunction">
 						<option value="">select function</option>
-						<option value="all">all function</option>
+						<option value="all_function">all function</option>
 						<option value="create_shader">create_shader</option>
 						<option value="create_program">create_program</option>
 						<option value="create_vbo">create_vbo</option>
@@ -141,8 +141,8 @@ function k(h){e = (h.keyCode !== 27);}</pre>
 			</div>
 			<div>
 				<p>
-					<input id="runButton" type="button" value="run">
-					<input id="stopButton" type="button" value="stop">
+					<input id="runButton" type="button" value=" r u n ">
+					<input id="stopButton" type="button" value=" s t o p ">
 				</p>
 		</div>
 	</div>

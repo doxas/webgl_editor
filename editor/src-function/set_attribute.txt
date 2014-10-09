@@ -1,0 +1,20 @@
+
+/**
+ * VBOをバインドし登録する関数
+ * @param {object} vbo 頂点バッファオブジェクト
+ * @param {Array.<number>} attribute location を格納した配列
+ * @param {Array.<number>} アトリビュートのストライドを格納した配列
+ */
+function set_attribute(vbo, attL, attS){
+	// 引数として受け取った配列を処理する
+	for(var i in vbo){
+		// バッファをバインドする
+		gl.bindBuffer(gl.ARRAY_BUFFER, vbo[i]);
+		
+		// attributeLocationを有効にする
+		gl.enableVertexAttribArray(attL[i]);
+		
+		// attributeLocationを通知し登録する
+		gl.vertexAttribPointer(attL[i], attS[i], gl.FLOAT, false, 0, 0);
+	}
+}

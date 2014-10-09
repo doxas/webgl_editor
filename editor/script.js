@@ -34,6 +34,7 @@ window.onload = function(){
 function editorInitialize(){
 	for(var i = 0, l = editorNames.length; i < l; i++){
 		editors[i] = editorGenerate('editor' + editorNames[i], editorModes[i]);
+		bid('editor' + editorNames[i]).style.fontSize = '14px';
 	}
 }
 
@@ -60,19 +61,33 @@ function editorAppend(eve){
 }
 
 function init(){
-	var b, d, e;
+	var b, d, e, f;
 	var s, t;
+	e = bid('console');
+	f = document.createElement('p');
+	f.textContent = 'reload';
+	e.insertBefore(f, e.firstChild);
 	e = bid('frame');
 	d = e.contentDocument;
 	d.open();
 	d.write(editors[0].getValue());
 	d.close();
 	b = d.body;
-	s =  'var WE = {run: false, vs: "", fs: "", textures: []};\n';
+	s =  'var WE = {parent: window.parent, console: null, button: null, run: false, vs: "", fs: "", textures: []};\n';
 	s += 'WE.vs = "' + editors[1].getValue().replace(/\n/g, '\\n') + '";\n';
 	s += 'WE.fs = "' + editors[2].getValue().replace(/\n/g, '\\n') + '";\n';
-	s += 'WE.run = false; var parentButton = window.parent.document.getElementById("stopButton");';
-	s += 'parentButton.addEventListener("click", function(){WE.run = false;}, true);';
+	s += 'WE.run = false;\n';
+	s += 'WE.console = WE.parent.document.getElementById("console");\n';
+	s += 'WE.button = WE.parent.document.getElementById("stopButton");\n';
+	s += 'WE.button.addEventListener("click", function(){WE.run = false;}, true);\n';
+	s += 'window.onerror = function(msg, url, line){\n';
+	s += '  var e = WE.parent.document.createElement("p");\n';
+	s += '  var f = WE.parent.document.createElement("em");\n';
+	s += '  f.textContent = msg + ": line " + line;\n';
+	s += '  e.appendChild(f);\n';
+	s += '  WE.console.insertBefore(e, WE.console.firstChild);\n';
+	s += '  return true;\n';
+	s += '};\n';
 	s += editors[3].getValue();
 	t = d.createElement('script');
 	t.textContent = s;
