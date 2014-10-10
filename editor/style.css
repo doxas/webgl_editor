@@ -72,9 +72,8 @@ html, body {
 
 #right #tabs .tab {
 	background-color: #272822;
-	border-radius: 5px 5px 0px 0px;
-	margin: 0px 2px;
-	padding: 0px 15px;
+	border-radius: 3px 3px 0px 0px;
+	padding: 0px 10px;
 	display: inline-block;
 	cursor: pointer;
 	box-shadow: 0px 0px 2px 0px whitesmoke;

@@ -1,7 +1,8 @@
-var ax, gl, prg, uni;
+var ax;
 var editors = [];
-var editorNames = ['HTML', 'Vertex', 'Fragment', 'Javascript'];
-var editorModes = ['html', 'glsl', 'glsl', 'javascript'];
+var editorNames = ['Javascript', 'HTML', 'Vertex', 'Fragment'];
+var editorModes = ['javascript', 'html', 'glsl', 'glsl'];
+var editorTheme = ['monokai', 'monokai', 'merbivore', 'merbivore'];
 var ajaxTarget = dirPath() + 'append.php';;
 
 window.onload = function(){
@@ -9,7 +10,6 @@ window.onload = function(){
 	editorInitialize();
 	win = window;
 	win.addEventListener('keydown', keydown, true);
-	win.addEventListener('keypress', keydown, true);
 	for(var i = 0, l = editorNames.length; i < l; i++){
 		bid('tab' + editorNames[i]).addEventListener('click', tabSelecter, true);
 	}
@@ -34,23 +34,17 @@ window.onload = function(){
 
 function editorInitialize(){
 	for(var i = 0, l = editorNames.length; i < l; i++){
-		editors[i] = editorGenerate('editor' + editorNames[i], editorModes[i]);
-		bid('editor' + editorNames[i]).style.fontSize = '14px';
+		editors[i] = editorGenerate('editor' + editorNames[i], editorModes[i], editorTheme[i]);
 	}
 }
 
-function editorGenerate(id, mode){
+function editorGenerate(id, mode, theme){
 	var elm;
 	elm = ace.edit(id);
-	elm.setTheme("ace/theme/monokai");
+	elm.setTheme("ace/theme/" + theme);
 	elm.getSession().setMode("ace/mode/" + mode);
-	elm.commands.addCommand({
-		name: 'cmd',
-		bindKey: {win: 'Ctrl-S', mac: 'Command-S'},
-		exec: function(elm){init();}
-	});
 	elm.getSession().setUseSoftTabs(false);
-	bid(id).style.fontSize = '12px';
+	bid(id).style.fontSize = '14px';
 	return elm;
 }
 
@@ -72,19 +66,14 @@ function init(){
 	e = document.createElement('iframe');
 	e.id = 'frame';
 	f.insertBefore(e, f.firstChild);
-	e = bid('console');
-	f = document.createElement('p');
-	f.textContent = 'reload';
-	e.insertBefore(f, e.firstChild);
-	e = bid('frame');
 	d = e.contentDocument;
 	d.open();
-	d.write(editors[0].getValue());
+	d.write(editors[1].getValue());
 	d.close();
 	b = d.body;
-	s =  'var WE = {parent: window.parent, console: null, button: null, run: false, vs: "", fs: "", textures: []};\n';
-	s += 'WE.vs = "' + editors[1].getValue().replace(/\n/g, '\\n') + '";\n';
-	s += 'WE.fs = "' + editors[2].getValue().replace(/\n/g, '\\n') + '";\n';
+	s =  'var WE = {parent: window.parent, console: null, button: null, run: false, err: null, vs: "", fs: "", textures: []};\n';
+	s += 'WE.vs = "' + editors[2].getValue().replace(/\n/g, '\\n') + '";\n';
+	s += 'WE.fs = "' + editors[3].getValue().replace(/\n/g, '\\n') + '";\n';
 	s += 'WE.run = false;\n';
 	s += 'WE.console = WE.parent.document.getElementById("console");\n';
 	s += 'WE.button = WE.parent.document.getElementById("stopButton");\n';
@@ -92,15 +81,32 @@ function init(){
 	s += 'window.onerror = function(msg, url, line){\n';
 	s += '  var e = WE.parent.document.createElement("p");\n';
 	s += '  var f = WE.parent.document.createElement("em");\n';
-	s += '  f.textContent = msg + ": line " + line;\n';
+	s += '  f.textContent = msg + "; line " + Math.max(line - 15, 0);\n';
 	s += '  e.appendChild(f);\n';
 	s += '  WE.console.insertBefore(e, WE.console.firstChild);\n';
+	s += '  WE.err = msg;';
 	s += '  return true;\n';
 	s += '};\n';
-	s += editors[3].getValue();
+	s += editors[0].getValue();
 	t = d.createElement('script');
 	t.textContent = s;
 	b.appendChild(t);
+	if(e.contentWindow.WE != null){
+		if(e.contentWindow.WE.err === null){
+			e = bid('console');
+			f = document.createElement('p');
+			d = new Date();
+			f.textContent = 'reload [' + d.getHours() + ':' + d.getMinutes() + ']';
+			e.insertBefore(f, e.firstChild);
+		}
+	}else{
+		e = document.createElement('p');
+		f = document.createElement('em');
+		f.textContent = 'editor -> javascript syntax error';
+		e.appendChild(f);
+		f = bid('console');
+		f.insertBefore(e, f.firstChild);
+	}
 }
 
 function render(){

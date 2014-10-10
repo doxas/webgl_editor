@@ -18,61 +18,16 @@
 	</div>
 	<div id="right">
 		<div id="tabs">
-			<div id="tabHTML" class="tab active">html</div>
+			<div id="tabJavascript" class="tab active">javascript</div>
+			<div id="tabHTML" class="tab">html</div>
 			<div id="tabVertex" class="tab">vertex shader</div>
 			<div id="tabFragment" class="tab">fragment shader</div>
-			<div id="tabJavascript" class="tab">javascript</div>
 		</div>
-		<pre id="editorHTML" class="editor selected">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-	&lt;head&gt;
-		&lt;style&gt;
-			* {
-				margin: 0px;
-				padding: 0px;
-				overflow: hidden;
-			}
-			html, body{
-				width: 100%;
-				height: 100%;
-			}
-		&lt;/style&gt;
-	&lt;/head&gt;
-	&lt;body&gt;
-		&lt;canvas id="c"&gt;&lt;/canvas&gt;
-	&lt;/body&gt;
-&lt;/html&gt;</pre>
-		<pre id="editorVertex" class="editor">attribute vec3 position;
-void main(void){
-	gl_Position = vec4(position, 1.0);
-}</pre>
-		<pre id="editorFragment" class="editor">precision mediump float;
-uniform float time;
-uniform vec2  resolution;
-vec3 hsv(float h, float s, float v){
-	vec4 t = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-	vec3 p = abs(fract(vec3(h) + t.xyz) * 6.0 - vec3(t.w));
-	return v * mix(vec3(t.x), clamp(p - vec3(t.x), 0.0, 1.0), s);
-}
-void main(void){
-	vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / max(resolution.x, resolution.y);
-	int j = 0;
-	vec2 x = vec2(-0.345, 0.654);
-	vec2 y = vec2(time * 0.005, 0.0);
-	vec2 z = p;
-	for(int i = 0; i < 360; i++){
-		j++;
-		if(length(z) > 2.0){break;}
-		z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + x + y;
-	}
-	float h = abs(mod(time * 15.0 - float(j), 360.0) / 360.0);
-	gl_FragColor = vec4(hsv(h, 1.0, 1.0), 1.0);
-}</pre>
-		<pre id="editorJavascript" class="editor">var a, b, c, d, g, h, p, u, w, x, y, z;
+		<pre id="editorJavascript" class="editor selected">var a, b, c, d, g, h, p, u, w, x, y, z;
 b = function(s){return document.getElementById(s);};
 w = window;
 w.addEventListener('keydown', k, true);
-c = b('c');
+c = b('canvas');
 g = c.getContext('webgl');
 p = g.createProgram();
 h = function(i, j){
@@ -119,6 +74,51 @@ if(!WE.run){
 	})();
 }
 function k(h){WE.run = (h.keyCode !== 27);}</pre>
+		<pre id="editorHTML" class="editor">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;style&gt;
+			* {
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;
+			}
+			html, body{
+				width: 100%;
+				height: 100%;
+			}
+		&lt;/style&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		&lt;canvas id="canvas"&gt;&lt;/canvas&gt;
+	&lt;/body&gt;
+&lt;/html&gt;</pre>
+		<pre id="editorVertex" class="editor">attribute vec3 position;
+void main(void){
+	gl_Position = vec4(position, 1.0);
+}</pre>
+		<pre id="editorFragment" class="editor">precision mediump float;
+uniform float time;
+uniform vec2  resolution;
+vec3 hsv(float h, float s, float v){
+	vec4 t = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+	vec3 p = abs(fract(vec3(h) + t.xyz) * 6.0 - vec3(t.w));
+	return v * mix(vec3(t.x), clamp(p - vec3(t.x), 0.0, 1.0), s);
+}
+void main(void){
+	vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / max(resolution.x, resolution.y);
+	int j = 0;
+	vec2 x = vec2(-0.345, 0.654);
+	vec2 y = vec2(time * 0.005, 0.0);
+	vec2 z = p;
+	for(int i = 0; i < 360; i++){
+		j++;
+		if(length(z) > 2.0){break;}
+		z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + x + y;
+	}
+	float h = abs(mod(time * 15.0 - float(j), 360.0) / 360.0);
+	gl_FragColor = vec4(hsv(h, 1.0, 1.0), 1.0);
+}</pre>
 		<div id="menu">
 			<div>
 				<p>
