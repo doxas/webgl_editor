@@ -1,4 +1,4 @@
-var ax, run, gl, prg, uni;
+var ax, gl, prg, uni;
 var editors = [];
 var editorNames = ['HTML', 'Vertex', 'Fragment', 'Javascript'];
 var editorModes = ['html', 'glsl', 'glsl', 'javascript'];
@@ -9,6 +9,7 @@ window.onload = function(){
 	editorInitialize();
 	win = window;
 	win.addEventListener('keydown', keydown, true);
+	win.addEventListener('keypress', keydown, true);
 	for(var i = 0, l = editorNames.length; i < l; i++){
 		bid('tab' + editorNames[i]).addEventListener('click', tabSelecter, true);
 	}
@@ -63,6 +64,14 @@ function editorAppend(eve){
 function init(){
 	var b, d, e, f;
 	var s, t;
+	e = bid('frame');
+	try{e.contentWindow.WE.run = false;}catch(err){}
+	f = e.parentNode;
+	f.removeChild(e);
+	e = null;
+	e = document.createElement('iframe');
+	e.id = 'frame';
+	f.insertBefore(e, f.firstChild);
 	e = bid('console');
 	f = document.createElement('p');
 	f.textContent = 'reload';
@@ -116,7 +125,21 @@ function tabSelecter(eve){
 	editorInitialize();
 }
 
-function keydown(eve){run = (eve.keyCode !== 27);}
+function keydown(eve){
+	if(eve != null){
+		if(eve.ctrlKey){
+			if(eve.keyCode === 83){
+				eve.returnValue = false;
+				setTimeout(init, 100);
+				return false;
+			}
+		}else{
+			try{
+				bid('frame').contentWindow.WE.run = (eve.keyCode !== 27);
+			}catch(err){}
+		}
+	}
+}
 
 function bid(id){return document.getElementById(id);}
 
