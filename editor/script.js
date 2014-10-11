@@ -133,7 +133,7 @@ function tabSelecter(eve){
 
 function keydown(eve){
 	if(eve != null){
-		if(eve.ctrlKey){
+		if(eve.ctrlKey || eve.metaKey){
 			if(eve.keyCode === 83){
 				eve.returnValue = false;
 				setTimeout(init, 100);
