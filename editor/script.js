@@ -81,10 +81,10 @@ function init(){
 	s += 'window.onerror = function(msg, url, line){\n';
 	s += '  var e = WE.parent.document.createElement("p");\n';
 	s += '  var f = WE.parent.document.createElement("em");\n';
-	s += '  f.textContent = msg + "; line " + Math.max(line - 15, 0);\n';
+	s += '  f.textContent = msg + "; line " + Math.max(line - 16, 0);\n';
 	s += '  e.appendChild(f);\n';
 	s += '  WE.console.insertBefore(e, WE.console.firstChild);\n';
-	s += '  WE.err = msg;';
+	s += '  WE.err = msg;\n';
 	s += '  return true;\n';
 	s += '};\n';
 	s += editors[0].getValue();

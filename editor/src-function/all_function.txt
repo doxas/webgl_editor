@@ -13,7 +13,7 @@ function create_shader(source, type){
 	shader = gl.createShader(type);
 	
 	// 生成されたシェーダにソースを割り当てる
-	gl.shaderSource(shader, scriptElement.text);
+	gl.shaderSource(shader, source);
 	
 	// シェーダをコンパイルする
 	gl.compileShader(shader);
