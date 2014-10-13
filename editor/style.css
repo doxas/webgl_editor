@@ -107,6 +107,7 @@ html, body {
 
 #menu p {
 	margin: 0px 5px;
+	display: inline-block;
 }
 
 #right .selected {

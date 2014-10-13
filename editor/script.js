@@ -3,10 +3,10 @@ var editors = [];
 var editorNames = ['Javascript', 'HTML', 'Vertex', 'Fragment'];
 var editorModes = ['javascript', 'html', 'glsl', 'glsl'];
 var editorTheme = ['monokai', 'monokai', 'merbivore', 'merbivore'];
-var ajaxTarget = dirPath() + 'append.php';;
+var ajaxTarget = '';
 
 window.onload = function(){
-	var e, f;
+	var e, f, s, t;
 	editorInitialize();
 	win = window;
 	win.addEventListener('keydown', keydown, true);
@@ -20,7 +20,33 @@ window.onload = function(){
 		var r = ax.getResponse();
 		if(r != null){
 			if(r !== 'bad request'){
-				alert('test');
+				s = dirPath();
+				switch(ajaxTarget){
+					case s + 'templete.php':
+						try{
+							t = JSON.parse(r);
+						}catch(err){
+							return;
+						}
+						if(t != null){
+							if(t.length > 0){
+								editors[0].setValue(t['javascript']);
+								editors[0].gotoLine(1);
+								editors[1].setValue(t['html']);
+								editors[1].gotoLine(1);
+								editors[2].setValue(t['vs']);
+								editors[2].gotoLine(1);
+								editors[3].setValue(t['fs']);
+								editors[3].gotoLine(1);
+							}
+						}
+						break;
+					case s + 'append.php':
+						t = editors[0].getValue() + r;
+						editors[0].setValue(t);
+						editors[0].gotoLine(editors[0].getSession().getLength());
+						break;
+				}
 			}
 		}
 	});
@@ -48,10 +74,17 @@ function editorGenerate(id, mode, theme){
 	return elm;
 }
 
+function editorLoadTemplete(eve){
+	var e = bid('loadSample');
+	if(e.value === ''){return;}
+	ajaxTarget = dirPath() + 'templete.php';
+	ax.requestPost(ajaxTarget, {sample: e.value});
+}
+
 function editorAppend(eve){
-	var e;
-	e = bid('appendFunction');
-	if(e.value === ""){return;}
+	var e = bid('appendFunction');
+	if(e.value === ''){return;}
+	ajaxTarget = dirPath() + 'append.php';
 	ax.requestPost(ajaxTarget, {append: e.value});
 }
 
@@ -72,22 +105,27 @@ function init(){
 	d.close();
 	b = d.body;
 	s =  'var WE = {parent: window.parent, console: null, button: null, run: false, err: null, vs: "", fs: "", textures: []};\n';
-	s += 'WE.vs = "' + editors[2].getValue().replace(/\n/g, '\\n') + '";\n';
-	s += 'WE.fs = "' + editors[3].getValue().replace(/\n/g, '\\n') + '";\n';
-	s += 'WE.run = false;\n';
-	s += 'WE.console = WE.parent.document.getElementById("console");\n';
-	s += 'WE.button = WE.parent.document.getElementById("stopButton");\n';
-	s += 'WE.button.addEventListener("click", function(){WE.run = false;}, true);\n';
-	s += 'window.onerror = function(msg, url, line){\n';
-	s += '  var e = WE.parent.document.createElement("p");\n';
-	s += '  var f = WE.parent.document.createElement("em");\n';
-	s += '  f.textContent = msg + "; line " + Math.max(line - 16, 0);\n';
-	s += '  e.appendChild(f);\n';
-	s += '  WE.console.insertBefore(e, WE.console.firstChild);\n';
-	s += '  WE.err = msg;\n';
-	s += '  return true;\n';
-	s += '};\n';
-	s += editors[0].getValue();
+	s += 'function initialize(){\n';
+	s += '  WE.vs = "' + editors[2].getValue().replace(/\n/g, '\\n') + '";\n';
+	s += '  WE.fs = "' + editors[3].getValue().replace(/\n/g, '\\n') + '";\n';
+	s += '  WE.run = false;\n';
+	s += '  WE.console = WE.parent.document.getElementById("console");\n';
+	s += '  WE.button = WE.parent.document.getElementById("stopButton");\n';
+	s += '  WE.button.addEventListener("click", function(){WE.run = false;}, true);\n';
+	s += '  window.onerror = function(msg, url, line){\n';
+	s += '    var e = WE.parent.document.createElement("p");\n';
+	s += '    var f = WE.parent.document.createElement("em");\n';
+	s += '    f.textContent = msg + "; line " + Math.max(line - 17, 0);\n';
+	s += '    e.appendChild(f);\n';
+	s += '    WE.console.insertBefore(e, WE.console.firstChild);\n';
+	s += '    WE.err = msg;\n';
+	s += '    return true;\n';
+	s += '  };\n';
+	s += editors[0].getValue() + '}';
+	s += 'var scr = document.createElement("script");\n';
+	s += 'scr.onload = function(){initialize();}\n';
+	s += 'scr.src = "http://wgld.org/j/minMatrixb.js"\n';
+	s += 'document.body.appendChild(scr);\n';
 	t = d.createElement('script');
 	t.textContent = s;
 	b.appendChild(t);
@@ -96,7 +134,7 @@ function init(){
 			e = bid('console');
 			f = document.createElement('p');
 			d = new Date();
-			f.textContent = 'reload [' + d.getHours() + ':' + d.getMinutes() + ']';
+			f.textContent = 'reload [' + zeroPadding(d.getHours(), 2) + ':' + zeroPadding(d.getMinutes(), 2) + ']';
 			e.insertBefore(f, e.firstChild);
 		}
 	}else{
@@ -107,9 +145,6 @@ function init(){
 		f = bid('console');
 		f.insertBefore(e, f.firstChild);
 	}
-}
-
-function render(){
 }
 
 function tabSelecter(eve){
@@ -148,6 +183,12 @@ function keydown(eve){
 }
 
 function bid(id){return document.getElementById(id);}
+
+function zeroPadding(num, count){
+	var z = (new Array(count)).join('0');
+	if((num + '').length > count){return num + '';}
+	return (z + num).slice(-1 * count);
+}
 
 function dirPath(){
 	var a = location.href.split('/');
