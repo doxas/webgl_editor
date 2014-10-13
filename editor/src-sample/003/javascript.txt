@@ -32,16 +32,24 @@ attStride[1] = 4;
 
 // モデルデータ(頂点位置)
 var vPosition = [
-	 0.0,  1.0,  0.0,
-	 1.0,  0.0,  0.0,
-	-1.0,  0.0,  0.0
+	-1.0,  1.0,  0.0,
+	 1.0,  1.0,  0.0,
+	-1.0, -1.0,  0.0,
+	 1.0, -1.0,  0.0
 ];
 
 // モデルデータ(頂点カラー)
 var vColor = [
 	 1.0, 0.0, 0.0, 1.0,
 	 0.0, 1.0, 0.0, 1.0,
-	 0.0, 0.0, 1.0, 1.0
+	 0.0, 0.0, 1.0, 1.0,
+	 1.0, 1.0, 1.0, 1.0
+];
+
+// 頂点インデックス
+var index = [
+	0, 2, 1,
+	1, 2, 3
 ];
 
 // VBOの生成
@@ -51,6 +59,12 @@ attVBO[1] = create_vbo(vColor);
 
 // VBOのバインドと登録
 set_attribute(attVBO, attLocation, attStride);
+
+// IBOの生成
+var ibo = create_ibo(index);
+
+// IBOをバインド
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 
 
 // - 行列の初期化 -------------------------------------------------------------
@@ -99,7 +113,7 @@ gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
 
 // - レンダリング -------------------------------------------------------------
 // モデルの描画
-gl.drawArrays(gl.TRIANGLES, 0, 3);
+gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
 
 // コンテキストの再描画
 gl.flush();
@@ -195,6 +209,28 @@ function create_vbo(data){
 	
 	// 生成した VBO を返して終了
 	return vbo;
+}
+
+/**
+ * IBOを生成する関数
+ * @param {Array.<number>} data 頂点インデックスを格納した一次元配列
+ * @return {object} インデックスバッファオブジェクト
+ */
+function create_ibo(data){
+	// バッファオブジェクトの生成
+	var ibo = gl.createBuffer();
+	
+	// バッファをバインドする
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+	
+	// バッファにデータをセット
+	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int16Array(data), gl.STATIC_DRAW);
+	
+	// バッファのバインドを無効化
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+	
+	// 生成したIBOを返して終了
+	return ibo;
 }
 
 /**
