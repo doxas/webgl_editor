@@ -30,27 +30,11 @@ var attStride = [];
 attStride[0] = 3;
 attStride[1] = 4;
 
-// モデルデータ(頂点位置)
-var vPosition = [
-	-1.0,  1.0,  0.0,
-	 1.0,  1.0,  0.0,
-	-1.0, -1.0,  0.0,
-	 1.0, -1.0,  0.0
-];
-
-// モデルデータ(頂点カラー)
-var vColor = [
-	 1.0, 0.0, 0.0, 1.0,
-	 0.0, 1.0, 0.0, 1.0,
-	 0.0, 0.0, 1.0, 1.0,
-	 1.0, 1.0, 1.0, 1.0
-];
-
-// 頂点インデックス
-var index = [
-	0, 2, 1,
-	1, 2, 3
-];
+// ユーティリティ関数からモデルを生成(トーラス)
+var torusData = torus(16, 16, 0.25, 0.75);
+var vPosition = torusData.p;
+var vColor    = torusData.c;
+var index     = torusData.i;
 
 // VBOの生成
 var attVBO = [];
@@ -80,7 +64,7 @@ var vpMatrix = m.identity(m.create());
 var mvpMatrix = m.identity(m.create());
 
 
-// - レンダリングのための WebGL 初期化設定 ------------------------------------
+// - レンダリングのための WebGL 初期化設定 ------------------------------------ *
 // canvasを初期化する色を設定する
 gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
@@ -89,6 +73,11 @@ gl.clearDepth(1.0);
 
 // canvasを初期化
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+// いくつかの設定を有効化する
+gl.enable(gl.DEPTH_TEST);
+gl.depthFunc(gl.LEQUAL);
+gl.enable(gl.CULL_FACE);
 
 
 // - 行列の計算 ---------------------------------------------------------------
@@ -111,7 +100,7 @@ var uniLocation = gl.getUniformLocation(prg, 'mvpMatrix');
 gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
 
 
-// - レンダリング ------------------------------------------------------------- *
+// - レンダリング -------------------------------------------------------------
 // モデルの描画
 gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
 
@@ -119,7 +108,7 @@ gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
 gl.flush();
 
 
-// - 各種ユーティリティ関数 --------------------------------------------------- *
+// - 各種ユーティリティ関数 ---------------------------------------------------
 /**
  * シェーダを生成する関数
  * @param {string} source シェーダのソースとなるテキスト
