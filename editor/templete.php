@@ -1,12 +1,12 @@
 <?php
-$path = file_get_contents(dirname(__FILE__).'/src-sample/'.$_POST['sample'].'/';
+$path = dirname(__FILE__).'/src-sample/'.$_POST['sample'].'/';
 $source = array();
 if(isset($_POST['sample'])){
 	if(file_exists($path.'html.txt')){
-		$source['html']       = $path.'html.txt');
-		$source['javascript'] = $path.'javascript.txt');
-		$source['vs']         = $path.'vs.txt');
-		$source['fs']         = $path.'fs.txt');
+		$source['html']       = file_get_contents($path.'html.txt');
+		$source['javascript'] = file_get_contents($path.'javascript.txt');
+		$source['vs']         = file_get_contents($path.'vs.txt');
+		$source['fs']         = file_get_contents($path.'fs.txt');
 	}
 }else{
 	die('bad request');

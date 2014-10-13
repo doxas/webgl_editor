@@ -29,14 +29,14 @@ window.onload = function(){
 							return;
 						}
 						if(t != null){
-							if(t.length > 0){
+							if(t['javascript'] != null && t['html'] != null && t['vs'] != null && t['fs'] != null){
 								editors[0].setValue(t['javascript']);
-								editors[0].gotoLine(1);
 								editors[1].setValue(t['html']);
-								editors[1].gotoLine(1);
 								editors[2].setValue(t['vs']);
-								editors[2].gotoLine(1);
 								editors[3].setValue(t['fs']);
+								editors[0].gotoLine(1);
+								editors[1].gotoLine(1);
+								editors[2].gotoLine(1);
 								editors[3].gotoLine(1);
 							}
 						}
@@ -52,6 +52,8 @@ window.onload = function(){
 	});
 	ax.initialize();
 	
+	e = bid('loadButton');
+	e.addEventListener('click', editorLoadTemplete, true);
 	e = bid('appendButton');
 	e.addEventListener('click', editorAppend, true);
 	e = bid('runButton');

@@ -19,12 +19,16 @@ var fShader = create_shader(WE.fs, gl.FRAGMENT_SHADER);
 var prg = create_program(vShader, fShader);
 
 
-// - 頂点属性に関する処理 -----------------------------------------------------
+// - 頂点属性に関する処理 ----------------------------------------------------- *
 // attributeLocationの取得
-var attLocation = gl.getAttribLocation(prg, 'position');
+var attLocation = [];
+attLocation[0] = gl.getAttribLocation(prg, 'position');
+attLocation[1] = gl.getAttribLocation(prg, 'color');
 
 // attributeの要素数(この場合は xyz の3要素)
-var attStride = 3;
+var attStride = [];
+attStride[0] = 3;
+attStride[1] = 4;
 
 // モデル(頂点)データ
 var vPosition = [
@@ -33,17 +37,20 @@ var vPosition = [
 	-1.0,  0.0,  0.0
 ];
 
+// モデル(頂点)データ
+var vColor = [
+	 1.0, 0.0, 0.0, 1.0,
+	 0.0, 1.0, 0.0, 1.0,
+	 0.0, 0.0, 1.0, 1.0
+];
+
 // VBOの生成
-var vbo = create_vbo(vPosition);
+var attVBO = [];
+attVBO[0] = create_vbo(vPosition);
+attVBO[1] = create_vbo(vColor);
 
-// VBOをバインド
-gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-
-// attribute属性を有効にする
-gl.enableVertexAttribArray(attLocation);
-
-// attribute属性を登録
-gl.vertexAttribPointer(attLocation, attStride, gl.FLOAT, false, 0, 0);
+// VBOのバインドと登録
+set_attribute(attVBO, attLocation, attStride);
 
 
 // - 行列の初期化 -------------------------------------------------------------
@@ -98,7 +105,7 @@ gl.drawArrays(gl.TRIANGLES, 0, 3);
 gl.flush();
 
 
-// - 各種ユーティリティ関数 ---------------------------------------------------
+// - 各種ユーティリティ関数 --------------------------------------------------- *
 /**
  * シェーダを生成する関数
  * @param {string} source シェーダのソースとなるテキスト
@@ -188,4 +195,24 @@ function create_vbo(data){
 	
 	// 生成した VBO を返して終了
 	return vbo;
+}
+
+/**
+ * VBOをバインドし登録する関数
+ * @param {object} vbo 頂点バッファオブジェクト
+ * @param {Array.<number>} attribute location を格納した配列
+ * @param {Array.<number>} アトリビュートのストライドを格納した配列
+ */
+function set_attribute(vbo, attL, attS){
+	// 引数として受け取った配列を処理する
+	for(var i in vbo){
+		// バッファをバインドする
+		gl.bindBuffer(gl.ARRAY_BUFFER, vbo[i]);
+		
+		// attributeLocationを有効にする
+		gl.enableVertexAttribArray(attL[i]);
+		
+		// attributeLocationを通知し登録する
+		gl.vertexAttribPointer(attL[i], attS[i], gl.FLOAT, false, 0, 0);
+	}
 }
