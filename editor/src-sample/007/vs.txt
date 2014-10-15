@@ -1,0 +1,14 @@
+attribute vec3 position;
+attribute vec3 normal;
+attribute vec4 color;
+uniform   mat4 mvpMatrix;
+uniform   mat4 invMatrix;
+uniform   vec3 lightDirection;
+varying   vec4 vColor;
+
+void main(){
+	vec3 inverseLight = (vec4(lightDirection, 1.0) * invMatrix).xyz;
+	float diff = clamp(dot(inverseLight, normal), 0.1, 1.0);
+	vColor = vec4(color.rgb * diff, color.a);
+	gl_Position = mvpMatrix * vec4(position, 1.0);
+}
