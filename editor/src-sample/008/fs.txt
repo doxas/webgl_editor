@@ -1,0 +1,12 @@
+precision mediump float;
+
+uniform mat4 invMatrix;
+uniform vec3 lightDirection;
+varying vec3 vNormal;
+varying vec4 vColor;
+
+void main(){
+	vec3 inverseLight = (vec4(lightDirection, 1.0) * invMatrix).xyz;
+	float diff = clamp(dot(inverseLight, vNormal), 0.1, 1.0);
+	gl_FragColor = vec4(vColor.rgb * diff, vColor.a);
+}
