@@ -1,0 +1,19 @@
+precision mediump float;
+
+uniform mat4 invMatrix;
+uniform vec3 lightDirection;
+uniform vec3 ambientColor;
+uniform vec3 eyePosition;
+uniform vec3 centerPoint;
+varying vec3 vNormal;
+varying vec4 vColor;
+
+void main(){
+	vec3 eyeDirection = eyePosition - centerPoint;
+	vec3 inverseLight = normalize((vec4(lightDirection, 1.0) * invMatrix).xyz);
+	vec3 inverseEye   = normalize((vec4(eyeDirection, 1.0) * invMatrix).xyz);
+	vec3 halfLightEye = normalize(inverseLight + inverseEye);
+	float diff =     clamp(dot(inverseLight, vNormal), 0.1, 1.0);
+	float spec = pow(clamp(dot(halfLightEye, vNormal), 0.0, 1.0), 20.0);
+	gl_FragColor = vec4(vColor.rgb * diff + spec + ambientColor, vColor.a);
+}

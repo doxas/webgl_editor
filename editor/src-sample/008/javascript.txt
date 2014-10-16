@@ -19,7 +19,7 @@ var fShader = create_shader(WE.fs, gl.FRAGMENT_SHADER);
 var prg = create_program(vShader, fShader);
 
 
-// - 頂点属性に関する処理 ----------------------------------------------------- *
+// - 頂点属性に関する処理 -----------------------------------------------------
 // attributeLocationの取得
 var attLocation = [];
 attLocation[0] = gl.getAttribLocation(prg, 'position');
@@ -55,7 +55,7 @@ var ibo = create_ibo(index);
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 
 
-// - uniform関連 -------------------------------------------------------------- *
+// - uniform関連 --------------------------------------------------------------
 // uniformLocationの取得
 var uniLocation = [];
 uniLocation[0] = gl.getUniformLocation(prg, 'mvpMatrix');
@@ -63,7 +63,7 @@ uniLocation[1] = gl.getUniformLocation(prg, 'invMatrix');
 uniLocation[2] = gl.getUniformLocation(prg, 'lightDirection');
 
 
-// - 行列の初期化 ------------------------------------------------------------- *
+// - 行列の初期化 -------------------------------------------------------------
 // minMatrix.js を用いた行列関連処理
 // matIVオブジェクトを生成
 var m = new matIV();
@@ -93,6 +93,12 @@ gl.depthFunc(gl.LEQUAL);
 gl.enable(gl.CULL_FACE);
 
 
+// スクリーンの初期化やドローコール周辺をアニメーションループに入れる ---------
+// アニメーション用に変数を初期化
+var count = 0;
+var lightDirection = [0.577, 0.577, 0.577];
+
+
 // - 行列の計算 ---------------------------------------------------------------
 // ビュー座標変換行列
 m.lookAt([0.0, 0.0, 5.0], [0.0, 0.0, 0.0], [0.0, 1.0, 0.0], vMatrix);
@@ -104,15 +110,11 @@ m.perspective(45, c.width / c.height, 0.1, 10.0, pMatrix);
 m.multiply(pMatrix, vMatrix, vpMatrix);
 
 
-// スクリーンの初期化やドローコール周辺をアニメーションループに入れる --------- *
-// アニメーション用に変数を初期化
-var count = 0;
-var lightDirection = [0.577, 0.577, 0.577];
-
+// - レンダリング関数 ---------------------------------------------------------
 // アニメーション用のフラグを立てる
 WE.run = true;
 
-// - レンダリング関数 ---------------------------------------------------------
+// レンダリング関数のコール
 render();
 
 function render(){
@@ -126,14 +128,14 @@ function render(){
 	// canvasを初期化
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
-	// = 行列の計算 =========================================================== *
+	// = 行列の計算 ===========================================================
 	// モデル座標変換行列
 	m.identity(mMatrix);
 	m.rotate(mMatrix, rad, [0.0, 1.0, 1.0], mMatrix);
 	m.multiply(vpMatrix, mMatrix, mvpMatrix);
 	m.inverse(mMatrix, invMatrix);
 	
-	// = uniform 関連 ========================================================= *
+	// = uniform 関連 =========================================================
 	// uniformLocationへ座標変換行列を登録
 	gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
 	gl.uniformMatrix4fv(uniLocation[1], false, invMatrix);

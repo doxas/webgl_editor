@@ -23,23 +23,27 @@ var prg = create_program(vShader, fShader);
 // attributeLocationの取得
 var attLocation = [];
 attLocation[0] = gl.getAttribLocation(prg, 'position');
-attLocation[1] = gl.getAttribLocation(prg, 'color');
+attLocation[1] = gl.getAttribLocation(prg, 'normal');
+attLocation[2] = gl.getAttribLocation(prg, 'color');
 
 // attributeの要素数(この場合は xyz の3要素)
 var attStride = [];
 attStride[0] = 3;
-attStride[1] = 4;
+attStride[1] = 3;
+attStride[2] = 4;
 
 // ユーティリティ関数からモデルを生成(トーラス)
-var torusData = torus(16, 16, 0.25, 0.75);
+var torusData = torus(64, 64, 0.25, 0.75);
 var vPosition = torusData.p;
+var vNormal   = torusData.n;
 var vColor    = torusData.c;
 var index     = torusData.i;
 
 // VBOの生成
 var attVBO = [];
 attVBO[0] = create_vbo(vPosition);
-attVBO[1] = create_vbo(vColor);
+attVBO[1] = create_vbo(vNormal);
+attVBO[2] = create_vbo(vColor);
 
 // VBOのバインドと登録
 set_attribute(attVBO, attLocation, attStride);
@@ -53,7 +57,11 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 
 // - uniform関連 -------------------------------------------------------------- *
 // uniformLocationの取得
-var uniLocation = gl.getUniformLocation(prg, 'mvpMatrix');
+var uniLocation = [];
+uniLocation[0] = gl.getUniformLocation(prg, 'mvpMatrix');
+uniLocation[1] = gl.getUniformLocation(prg, 'invMatrix');
+uniLocation[2] = gl.getUniformLocation(prg, 'lightDirection');
+uniLocation[3] = gl.getUniformLocation(prg, 'ambientColor');
 
 
 // - 行列の初期化 -------------------------------------------------------------
@@ -67,9 +75,10 @@ var vMatrix = m.identity(m.create());
 var pMatrix = m.identity(m.create());
 var vpMatrix = m.identity(m.create());
 var mvpMatrix = m.identity(m.create());
+var invMatrix = m.identity(m.create());
 
 
-// - レンダリングのための WebGL 初期化設定 ------------------------------------ *
+// - レンダリングのための WebGL 初期化設定 ------------------------------------
 // ビューポートを設定する
 gl.viewport(0, 0, c.width, c.height);
 
@@ -88,9 +97,11 @@ gl.enable(gl.CULL_FACE);
 // スクリーンの初期化やドローコール周辺をアニメーションループに入れる --------- *
 // アニメーション用に変数を初期化
 var count = 0;
+var lightDirection = [0.577, 0.577, 0.577];
+var ambientColor = [0.1, 0.1, 0.1];
 
 
-// - 行列の計算 --------------------------------------------------------------- *
+// - 行列の計算 ---------------------------------------------------------------
 // ビュー座標変換行列
 m.lookAt([0.0, 0.0, 5.0], [0.0, 0.0, 0.0], [0.0, 1.0, 0.0], vMatrix);
 
@@ -101,7 +112,7 @@ m.perspective(45, c.width / c.height, 0.1, 10.0, pMatrix);
 m.multiply(pMatrix, vMatrix, vpMatrix);
 
 
-// - レンダリング関数 --------------------------------------------------------- *
+// - レンダリング関数 ---------------------------------------------------------
 // アニメーション用のフラグを立てる
 WE.run = true;
 
@@ -124,10 +135,14 @@ function render(){
 	m.identity(mMatrix);
 	m.rotate(mMatrix, rad, [0.0, 1.0, 1.0], mMatrix);
 	m.multiply(vpMatrix, mMatrix, mvpMatrix);
+	m.inverse(mMatrix, invMatrix);
 	
-	// = uniform 関連 =========================================================
+	// = uniform 関連 ========================================================= *
 	// uniformLocationへ座標変換行列を登録
-	gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+	gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
+	gl.uniformMatrix4fv(uniLocation[1], false, invMatrix);
+	gl.uniform3fv(uniLocation[2], lightDirection);
+	gl.uniform3fv(uniLocation[3], ambientColor);
 	
 	// = レンダリング =========================================================
 	// モデルの描画
