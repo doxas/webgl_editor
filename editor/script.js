@@ -34,10 +34,10 @@ window.onload = function(){
 								editors[1].setValue(t['html']);
 								editors[2].setValue(t['vs']);
 								editors[3].setValue(t['fs']);
-								editors[0].gotoLine(1);
 								editors[1].gotoLine(1);
 								editors[2].gotoLine(1);
 								editors[3].gotoLine(1);
+								setTimeout(function(){editors[0].gotoLine(1);}, 100);
 							}
 						}
 						break;
