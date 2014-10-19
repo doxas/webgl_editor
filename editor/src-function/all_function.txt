@@ -134,7 +134,7 @@ function set_attribute(vbo, attL, attS){
 
 /**
  * テクスチャを生成する関数
- * @param {object} source テクスチャに適用する画像ファイルのパス
+ * @param {string} source テクスチャに適用する画像ファイルのパス
  * @param {number} number テクスチャ用配列に格納するためのインデックス
  */
 function create_texture(source, number){

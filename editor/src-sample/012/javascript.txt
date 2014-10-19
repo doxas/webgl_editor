@@ -19,31 +19,35 @@ var fShader = create_shader(WE.fs, gl.FRAGMENT_SHADER);
 var prg = create_program(vShader, fShader);
 
 
-// - 頂点属性に関する処理 -----------------------------------------------------
+// - 頂点属性に関する処理 ----------------------------------------------------- *
 // attributeLocationの取得
 var attLocation = [];
 attLocation[0] = gl.getAttribLocation(prg, 'position');
 attLocation[1] = gl.getAttribLocation(prg, 'normal');
 attLocation[2] = gl.getAttribLocation(prg, 'color');
+attLocation[3] = gl.getAttribLocation(prg, 'texCoord');
 
 // attributeの要素数(この場合は xyz の3要素)
 var attStride = [];
 attStride[0] = 3;
 attStride[1] = 3;
 attStride[2] = 4;
+attStride[3] = 2;
 
-// ユーティリティ関数からモデルを生成(トーラス)
-var torusData = torus(64, 64, 0.25, 0.75);
-var vPosition = torusData.p;
-var vNormal   = torusData.n;
-var vColor    = torusData.c;
-var index     = torusData.i;
+// ユーティリティ関数からモデルを生成(球体)
+var sphereData = sphere(64, 64, 1.0, [1.0, 1.0, 1.0, 1.0]);
+var vPosition = sphereData.p;
+var vNormal   = sphereData.n;
+var vColor    = sphereData.c;
+var vTexCoord = sphereData.t;
+var index     = sphereData.i;
 
 // VBOの生成
 var attVBO = [];
 attVBO[0] = create_vbo(vPosition);
 attVBO[1] = create_vbo(vNormal);
 attVBO[2] = create_vbo(vColor);
+attVBO[3] = create_vbo(vTexCoord);
 
 // VBOのバインドと登録
 set_attribute(attVBO, attLocation, attStride);
@@ -65,6 +69,7 @@ uniLocation[3] = gl.getUniformLocation(prg, 'ambientColor');
 uniLocation[4] = gl.getUniformLocation(prg, 'eyePosition');
 uniLocation[5] = gl.getUniformLocation(prg, 'centerPoint');
 uniLocation[6] = gl.getUniformLocation(prg, 'mMatrix');
+uniLocation[7] = gl.getUniformLocation(prg, 'textureUnit');
 
 
 // - 行列の初期化 -------------------------------------------------------------
@@ -97,10 +102,10 @@ gl.depthFunc(gl.LEQUAL);
 gl.enable(gl.CULL_FACE);
 
 
-// スクリーンの初期化やドローコール周辺をアニメーションループに入れる --------- *
+// スクリーンの初期化やドローコール周辺をアニメーションループに入れる ---------
 // アニメーション用に変数を初期化
 var count = 0;
-var lightPosition = [0.0, 0.0, 0.0];
+var lightPosition = [1.0, 1.0, 1.0];
 var ambientColor = [0.1, 0.1, 0.1];
 var eyePosition = [0.0, 0.0, 5.0];
 var centerPoint = [0.0, 0.0, 0.0];
@@ -115,6 +120,10 @@ m.perspective(45, c.width / c.height, 0.1, 10.0, pMatrix);
 
 // 各行列を掛け合わせ座標変換行列
 m.multiply(pMatrix, vMatrix, vpMatrix);
+
+
+// - テクスチャ関連 ----------------------------------------------------------- *
+create_texture('lena.jpg', 0);
 
 
 // - レンダリング関数 ---------------------------------------------------------
@@ -135,12 +144,13 @@ function render(){
 	// canvasを初期化
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
-	// = 行列の計算 ===========================================================
+	// テクスチャをバインドする
+	gl.bindTexture(gl.TEXTURE_2D, WE.textures[0]);
+	
+	// = 行列の計算 =========================================================== *
 	// モデル座標変換行列
 	m.identity(mMatrix);
 	m.rotate(mMatrix, rad, [0.0, 1.0, 0.0], mMatrix);
-	m.translate(mMatrix, [1.5, 0.0, 0.0], mMatrix);
-	m.rotate(mMatrix, Math.PI / 2, [1.0, 0.0, 0.0], mMatrix);
 	m.multiply(vpMatrix, mMatrix, mvpMatrix);
 	m.inverse(mMatrix, invMatrix);
 	
@@ -153,6 +163,7 @@ function render(){
 	gl.uniform3fv(uniLocation[4], eyePosition);
 	gl.uniform3fv(uniLocation[5], centerPoint);
 	gl.uniformMatrix4fv(uniLocation[6], false, mMatrix);
+	gl.uniform1i(uniLocation[7], 0);
 	
 	// = レンダリング =========================================================
 	// モデルの描画
@@ -166,7 +177,7 @@ function render(){
 }
 
 
-// - 各種ユーティリティ関数 ---------------------------------------------------
+// - 各種ユーティリティ関数 --------------------------------------------------- *
 /**
  * シェーダを生成する関数
  * @param {string} source シェーダのソースとなるテキスト
@@ -299,3 +310,38 @@ function set_attribute(vbo, attL, attS){
 		gl.vertexAttribPointer(attL[i], attS[i], gl.FLOAT, false, 0, 0);
 	}
 }
+
+/**
+ * テクスチャを生成する関数
+ * @param {string} source テクスチャに適用する画像ファイルのパス
+ * @param {number} number テクスチャ用配列に格納するためのインデックス
+ */
+function create_texture(source, number){
+	// イメージオブジェクトの生成
+	var img = new Image();
+	
+	// データのオンロードをトリガーにする
+	img.onload = function(){
+		// テクスチャオブジェクトの生成
+		var tex = gl.createTexture();
+		
+		// テクスチャをバインドする
+		gl.bindTexture(gl.TEXTURE_2D, tex);
+		
+		// テクスチャへイメージを適用
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+		
+		// ミップマップを生成
+		gl.generateMipmap(gl.TEXTURE_2D);
+		
+		// テクスチャのバインドを無効化
+		gl.bindTexture(gl.TEXTURE_2D, null);
+		
+		// 生成したテクスチャを変数に代入
+		WE.textures[number] = tex;
+	};
+	
+	// イメージオブジェクトのソースを指定
+	img.src = source;
+}
+
