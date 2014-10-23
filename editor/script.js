@@ -6,7 +6,7 @@ var editorTheme = ['monokai', 'monokai', 'merbivore', 'merbivore'];
 var ajaxTarget = '';
 
 window.onload = function(){
-	var e, f, s, t;
+	var e, s, t;
 	editorInitialize();
 	win = window;
 	win.addEventListener('keydown', keydown, true);
@@ -117,11 +117,24 @@ function init(){
 	s += '  window.onerror = function(msg, url, line){\n';
 	s += '    var e = WE.parent.document.createElement("p");\n';
 	s += '    var f = WE.parent.document.createElement("em");\n';
-	s += '    f.textContent = msg + "; line " + Math.max(line - 17, 0);\n';
+	s += '    f.textContent = msg + "; line " + Math.max(line - 30, 0);\n';
 	s += '    e.appendChild(f);\n';
 	s += '    WE.console.insertBefore(e, WE.console.firstChild);\n';
 	s += '    WE.err = msg;\n';
 	s += '    return true;\n';
+	s += '  };\n';
+	s += '  window.console.log = function(msg){\n';
+	s += '    var e = WE.parent.document.createElement("p");\n';
+	s += '    var f = WE.parent.document.createElement("em");\n';
+	s += '    if(typeof msg === "number"){\n';
+	s += '      f.textContent = "log: " + msg;\n';
+	s += '    }else if(msg instanceof Array){;\n';
+	s += '      f.textContent = "log: " + "[" + msg.join(\', \') + "]";\n';
+	s += '    }else{;\n';
+	s += '	    f.textContent = "log: \'" + msg + "\'";\n';
+	s += '    };\n';
+	s += '    e.appendChild(f);\n';
+	s += '    WE.console.insertBefore(e, WE.console.firstChild);\n';
 	s += '  };\n';
 	s += editors[0].getValue() + '}';
 	s += 'var scr = document.createElement("script");\n';

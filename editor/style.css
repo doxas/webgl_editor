@@ -110,6 +110,10 @@ html, body {
 	display: inline-block;
 }
 
+#menu caption {
+	margin: 0px 3px;
+}
+
 #right .selected {
 	display: block !important;
 }
