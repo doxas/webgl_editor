@@ -46,6 +46,11 @@ html, body {
 }
 
 #left #console p em {
+	color: lightskyblue;
+	font-style: normal;
+}
+
+#left #console p strong {
 	color: deeppink;
 	font-style: normal;
 }

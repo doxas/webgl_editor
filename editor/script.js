@@ -116,7 +116,7 @@ function init(){
 	s += '  WE.button.addEventListener("click", function(){WE.run = false;}, true);\n';
 	s += '  window.onerror = function(msg, url, line){\n';
 	s += '    var e = WE.parent.document.createElement("p");\n';
-	s += '    var f = WE.parent.document.createElement("em");\n';
+	s += '    var f = WE.parent.document.createElement("strong");\n';
 	s += '    f.textContent = msg + "; line " + Math.max(line - 30, 0);\n';
 	s += '    e.appendChild(f);\n';
 	s += '    WE.console.insertBefore(e, WE.console.firstChild);\n';
@@ -154,7 +154,7 @@ function init(){
 		}
 	}else{
 		e = document.createElement('p');
-		f = document.createElement('em');
+		f = document.createElement('strong');
 		f.textContent = 'editor -> javascript syntax error';
 		e.appendChild(f);
 		f = bid('console');
