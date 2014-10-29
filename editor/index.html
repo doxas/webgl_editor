@@ -3,6 +3,7 @@
 	<meta charset="UTF-8">
 	<meta name="description" content="webgl editor">
 	<meta name="keywords" content="webgl editor">
+	<meta name="robots" content="noindex,nofollow">
 	<link rel="stylesheet" href="style.css" type="text/css">
 	<script type="text/javascript" src="minMatrix.js"></script>
 	<script type="text/javascript" src="script.js"></script>
@@ -31,23 +32,6 @@
 		<div id="menu">
 			<div>
 				<p>
-					<span class="caption">append function:</span>
-					<select id="appendFunction">
-						<option value="">select function</option>
-						<option value="all_function">all function</option>
-						<option value="create_shader">create_shader</option>
-						<option value="create_program">create_program</option>
-						<option value="create_vbo">create_vbo</option>
-						<option value="create_ibo">create_ibo</option>
-						<option value="set_attribute">set_attribute</option>
-						<option value="create_texture">create_texture</option>
-						<option value="create_framebuffer">create_framebuffer</option>
-						<option value="create_texture_cube">create_texture_cube</option>
-						<option value="create_framebuffer_cube">create_framebuffer_cube</option>
-					</select>
-					<input id="appendButton" type="button" value="append">
-				</p>
-				<p>
 					<span class="caption">load sample:</span>
 					<select id="loadSample">
 						<option value="">select sample</option>
@@ -65,6 +49,23 @@
 						<option value="012">012: texture mapping</option>
 					</select>
 					<input id="loadButton" type="button" value="load">
+				</p>
+				<p>
+					<span class="caption">append function:</span>
+					<select id="appendFunction">
+						<option value="">select function</option>
+						<option value="all_function">all function</option>
+						<option value="create_shader">create_shader</option>
+						<option value="create_program">create_program</option>
+						<option value="create_vbo">create_vbo</option>
+						<option value="create_ibo">create_ibo</option>
+						<option value="set_attribute">set_attribute</option>
+						<option value="create_texture">create_texture</option>
+						<option value="create_framebuffer">create_framebuffer</option>
+						<option value="create_texture_cube">create_texture_cube</option>
+						<option value="create_framebuffer_cube">create_framebuffer_cube</option>
+					</select>
+					<input id="appendButton" type="button" value="append">
 				</p>
 			</div>
 			<div>
