@@ -26,7 +26,7 @@ attLocation[0] = gl.getAttribLocation(prg, 'position');
 attLocation[1] = gl.getAttribLocation(prg, 'normal');
 attLocation[2] = gl.getAttribLocation(prg, 'color');
 
-// attributeの要素数(この場合は xyz の3要素)
+// attributeの要素数
 var attStride = [];
 attStride[0] = 3;
 attStride[1] = 3;

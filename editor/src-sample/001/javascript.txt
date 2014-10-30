@@ -23,7 +23,7 @@ var prg = create_program(vShader, fShader);
 // attributeLocationの取得
 var attLocation = gl.getAttribLocation(prg, 'position');
 
-// attributeの要素数(この場合は xyz の3要素)
+// attributeの要素数
 var attStride = 3;
 
 // モデル(頂点)データ
