@@ -19,7 +19,7 @@ var fShader = create_shader(WE.fs, gl.FRAGMENT_SHADER);
 var prg = create_program(vShader, fShader);
 
 
-// - 頂点属性に関する処理 ----------------------------------------------------- *
+// - 頂点属性に関する処理 -----------------------------------------------------
 // attributeLocationの取得
 var attLocation = [];
 attLocation[0] = gl.getAttribLocation(prg, 'position');
@@ -59,7 +59,7 @@ var ibo = create_ibo(index);
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 
 
-// - uniform関連 -------------------------------------------------------------- *
+// - uniform関連 --------------------------------------------------------------
 // uniformLocationの取得
 var uniLocation = [];
 uniLocation[0] = gl.getUniformLocation(prg, 'mvpMatrix');
@@ -102,21 +102,21 @@ gl.depthFunc(gl.LEQUAL);
 gl.enable(gl.CULL_FACE);
 
 
-// スクリーンの初期化やドローコール周辺をアニメーションループに入れる ---------
+// スクリーンの初期化やドローコール周辺をアニメーションループに入れる --------- *
 // アニメーション用に変数を初期化
 var count = 0;
 var lightPosition = [1.0, 1.0, 1.0];
 var ambientColor = [0.1, 0.1, 0.1];
-var eyePosition = [0.0, 0.0, 5.0];
+var eyePosition = [0.0, 0.0, 10.0];
 var centerPoint = [0.0, 0.0, 0.0];
 
 
-// - 行列の計算 ---------------------------------------------------------------
+// - 行列の計算 --------------------------------------------------------------- *
 // ビュー座標変換行列
 m.lookAt(eyePosition, centerPoint, [0.0, 1.0, 0.0], vMatrix);
 
 // プロジェクション座標変換行列
-m.perspective(45, c.width / c.height, 0.1, 10.0, pMatrix);
+m.perspective(45, c.width / c.height, 0.1, 20.0, pMatrix);
 
 // 各行列を掛け合わせ座標変換行列
 m.multiply(pMatrix, vMatrix, vpMatrix);
@@ -124,6 +124,7 @@ m.multiply(pMatrix, vMatrix, vpMatrix);
 
 // - テクスチャ関連 ----------------------------------------------------------- *
 create_texture('lenna.jpg', 0);
+create_texture('baboon.jpg', 1);
 
 
 // - レンダリング関数 ---------------------------------------------------------
@@ -144,17 +145,18 @@ function render(){
 	// canvasを初期化
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
+	// = 第一のモデル ========================================================= *
 	// テクスチャをバインドする
 	gl.bindTexture(gl.TEXTURE_2D, WE.textures[0]);
 	
-	// = 行列の計算 =========================================================== *
 	// モデル座標変換行列
 	m.identity(mMatrix);
+	m.rotate(mMatrix, rad, [0.0, 1.0, 0.0], mMatrix);
+	m.translate(mMatrix, [0.0, 0.0, 3.0], mMatrix);
 	m.rotate(mMatrix, rad, [0.0, 1.0, 0.0], mMatrix);
 	m.multiply(vpMatrix, mMatrix, mvpMatrix);
 	m.inverse(mMatrix, invMatrix);
 	
-	// = uniform 関連 ========================================================= *
 	// uniformLocationへ座標変換行列を登録
 	gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
 	gl.uniformMatrix4fv(uniLocation[1], false, invMatrix);
@@ -165,7 +167,27 @@ function render(){
 	gl.uniformMatrix4fv(uniLocation[6], false, mMatrix);
 	gl.uniform1i(uniLocation[7], 0);
 	
-	// = レンダリング =========================================================
+	// モデルの描画
+	gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
+	
+	// = 第二のモデル ========================================================= *
+	// テクスチャをバインドする
+	gl.bindTexture(gl.TEXTURE_2D, WE.textures[1]);
+	
+	// モデル座標変換行列
+	m.identity(mMatrix);
+	m.rotate(mMatrix, rad, [0.0, 1.0, 0.0], mMatrix);
+	m.translate(mMatrix, [0.0, 0.0, -3.0], mMatrix);
+	m.rotate(mMatrix, rad, [0.0, 1.0, 0.0], mMatrix);
+	m.multiply(vpMatrix, mMatrix, mvpMatrix);
+	m.inverse(mMatrix, invMatrix);
+	
+	// uniformLocationへ座標変換行列を登録
+	gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
+	gl.uniformMatrix4fv(uniLocation[1], false, invMatrix);
+	gl.uniformMatrix4fv(uniLocation[6], false, mMatrix);
+	gl.uniform1i(uniLocation[7], 0);
+	
 	// モデルの描画
 	gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
 	
@@ -177,7 +199,7 @@ function render(){
 }
 
 
-// - 各種ユーティリティ関数 --------------------------------------------------- *
+// - 各種ユーティリティ関数 ---------------------------------------------------
 /**
  * シェーダを生成する関数
  * @param {string} source シェーダのソースとなるテキスト
