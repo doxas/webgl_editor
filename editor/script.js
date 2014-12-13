@@ -106,7 +106,7 @@ function init(){
 	d.write(editors[1].getValue());
 	d.close();
 	b = d.body;
-	s =  'var WE = {parent: window.parent, console: null, button: null, run: false, err: null, vs: "", fs: "", textures: []};\n';
+	s =  'var WE = {parent: window.parent, console: null, button: null, run: false, err: null, vs: "", fs: "", textures: [], q: null, qt: null};\n';
 	s += 'function initialize(){\n';
 	s += '  WE.vs = "' + editors[2].getValue().replace(/\n/g, '\\n') + '";\n';
 	s += '  WE.fs = "' + editors[3].getValue().replace(/\n/g, '\\n') + '";\n';
